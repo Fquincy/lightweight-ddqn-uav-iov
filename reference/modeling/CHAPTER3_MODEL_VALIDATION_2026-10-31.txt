@@ -1,0 +1,73 @@
+CHAPTER 3 MODEL VALIDATION PASS
+Date: 2026-10-31
+Scope: deterministic baseline and sensitivity checks; no agent training
+
+FILES
+- chapter3_iov_env.py: standalone Chapter 3 environment.
+- test_chapter3_iov_env.py: deterministic unit checks.
+- validate_chapter3_model.py: fixed-policy and parameter sensitivity runner.
+- validation\chapter3_model_validation.csv: 95 scenario/seed records (19 scenarios x 5 seeds).
+
+RUN COMMANDS
+    python -m unittest -v test_chapter3_iov_env.py
+    python validate_chapter3_model.py
+
+MODEL CORRECTION FOUND
+
+Visual inspection of the rotary-wing source equation showed a nested square root in the induced-power term. The first environment version had only one square root over the full expression. chapter3_iov_env.py now implements the source equation as:
+
+    Pi * sqrt(sqrt(1 + V^4 / (4*v0^4)) - V^2 / (2*v0^2))
+
+The test suite checks this expression. The G2A model was checked against the IEEE paper's equations. Its 20 MHz G2A bandwidth appears as the bandwidth of each link, and the rate expression includes interference from other UEs. The environment's default mode gives each link 20 MHz and models co-channel interference from tasks assigned to the same UAV, with fixed 1 W vehicle transmit power. The earlier global-equal-share/no-interference version remains a comparison mode, not the reference equation. The simplified model still omits cross-UAV interference, explicit coverage association, and transmit-power control.
+
+The reward was also changed to make the Chapter 3 objective explicit: delay weight 0.5, UAV-energy weight 0.5, delay normalizer 0.300 s, fleet UAV-energy normalizer 2 * battery capacity / episode length, plus a 1.0 deadline-miss penalty. Only UAV propulsion and UAV computing energy enter the energy objective. Vehicle CPU and uplink energy are logged separately because Chapter 3's stated energy objective is UAV energy. These weights and normalizers are proposed experimental settings and should be frozen before policy training.
+
+PROCEDURE
+
+- Five fixed seeds: 101, 211, 307, 401, 503.
+- 30 vehicles, 40 one-second slots per episode, 1,200 tasks per seed.
+- UAVs hovered for all fixed-policy runs; they still incur source-model propulsion power at zero speed.
+- Five non-trained destination rules: all local, nearest UAV, nearest RSU, a UAV-selective rule, and round-robin over the five destinations. UAV-selective sends the nearest distinct vehicle to each UAV (at most one task per UAV per slot) and routes all remaining tasks to their nearest RSU.
+- RSU sensitivity: compute capacity 10/20/40 Gcycles/s crossed with fixed link rate 100/1000/10000 Mbit/s.
+- Radio sensitivity: carrier frequency 0.7/2.0/3.5/5.9 GHz under the default 20 MHz per-link, same-UAV interference model and UAV-selective load.
+- No confidence intervals are reported; five deterministic seeds are only a model smoke/sensitivity check, not the final experiment design.
+
+BASELINE RESULTS (MEANS OVER FIVE SEEDS)
+
+Policy                    Deadline success   Mean delay   P95 delay
+All local                 57.0%              0.266 s      0.326 s
+Nearest UAV               0.0%               5,489.600 s  10,789.717 s
+Nearest RSU               84.4%              0.172 s      0.327 s
+UAV-selective             89.0%              0.158 s      0.307 s
+Round-robin               51.4%              1,253.770 s  6,496.828 s
+Nearest UAV, global equal-share comparison 0.0% 5.894 s   7.036 s
+
+These are fixed-rule diagnostics under the current configuration. UAV-selective is a hand-designed heuristic, not a learned policy. It improves on nearest-RSU by 4.6 percentage points in this provisional setup, suggesting UAVs can contribute when a small number of strong links are selected. None of these results is DDQN performance or evidence for a thesis claim.
+
+SENSITIVITY FINDINGS
+
+- With nearest-RSU routing, changing RSU capacity from 10 to 40 Gcycles/s and fixed link rate from 100 Mbit/s to 10 Gbit/s moves mean deadline success from 27.8% at (10 Gcycles/s, 100 Mbit/s) to 100% at (40 Gcycles/s, 1-10 Gbit/s). At the provisional central point (20 Gcycles/s, 1 Gbit/s), success averages 84.4%.
+- Under the reference-aligned G2A mode, fixed nearest-UAV routing is unstable: mean delay exceeds 5,000 s because same-UAV uplink interference and server queues accumulate under the test's 30 simultaneous uploads per second. This policy is a stress case, not a reasonable baseline. The global equal-share/no-interference comparator has 5.894 s mean delay and also misses every deadline. UAV movement or learned task selection may change outcomes, but fixed 1 W power, 30 simultaneous arrivals, and this simplified resource model need review before training.
+- The UAV-selective heuristic assigns only one of 30 tasks to each UAV per slot and places the other 28 at the nearest RSU. Across five seeds it completes 89.0% of tasks by deadline with mean delay 0.158 s, compared with 84.4% and 0.172 s for nearest-RSU only. This is a useful non-learning baseline to include later; it does not establish that DDQN will discover or improve the policy.
+- Under the UAV-selective load, changing carrier frequency from 0.7 to 5.9 GHz changes mean deadline success from 89.0% to 88.9%, and mean delay from 0.157 to 0.159 s. Carrier choice has little effect in this tested configuration. Keep 2 GHz as a provisional baseline only; replace it with a cited operating band when one is selected.
+- For the baseline all-local policy, the weighted mean normalized delay term is 0.444 per slot, weighted UAV energy term 0.055, and deadline-miss penalty term 0.430. Under nearest-RSU, corresponding terms are 0.286, 0.055, and 0.156. These show the current objective is numerically defined, but energy contributes less than delay and misses in the tested cases. If the research question expects strong energy-latency tradeoffs, the weights must be justified or varied in a prespecified sensitivity experiment.
+- With both UAVs hovering for 40 seconds, UAV propulsion energy is approximately 109.6 kJ total. UAV computing energy is about 4.8 kJ under nearest-UAV routing and negligible under local/RSU-only routing. Minimum remaining UAV battery stays above 442 kJ for these runs, so the 500 kJ per-UAV battery assumption is not binding in this horizon.
+
+INTERPRETATION AND NEXT GATE
+
+1. The UAV-selective result gives a workable fixed heuristic under the current radio assumptions. Retain UE transmit power fixed at 1 W for Chapter 3 because its draft optimization variables do not include power control; state this as an adaptation from the reference, which does optimize power. Confirm coverage association and cross-UAV interference/reuse, and state the current same-UAV-only simplification clearly.
+2. Keep 2 GHz as a provisional simulation setting while selecting a cited IoV operating band. The current sensitivity sweep suggests frequency choice is secondary for the UAV-selective load.
+3. Source or retain sensitivity ranges for RSU compute and link capacity; their effect on success is too large to treat 20 Gcycles/s and 1 Gbit/s as inconsequential defaults.
+4. Keep the corrected propulsion equation, but identify the intended aircraft class before treating its generic 100 N rotor parameters as thesis-calibrated results.
+5. Freeze reward weights and scales before training. Keep the 0.5/0.5 baseline as one candidate, and predeclare any alternative weight cases rather than choosing them after seeing learned results.
+6. Only after gates 1-5 are closed, create the factorized DDQN entrypoint and run interface/action tests. Then train and evaluate with independent seeds and raw task-level traces.
+
+TEST RESULTS
+
+Ten unit tests pass, including task-unit conversion, queue service times, radio delay and energy, co-channel interference behavior, propulsion equation, reward decomposition, fixed-seed repeatability, and action validation. Python compilation succeeds. No training, performance claim, thesis revision, or figure generation was performed.
+
+PARAMETER PROVENANCE
+
+- Task input, compute workload, UE/UAV compute, delay threshold, G2A bandwidth, noise, and UAV per-slot movement limit: Hao et al., IEEE TMC 2024, DOI 10.1109/TMC.2024.3350078.
+- Rotary-wing propulsion equation and generic rotor parameters: Zeng, Xu, and Zhang, IEEE TWC 2019, DOI 10.1109/TWC.2019.2902559, preprint arXiv:1804.02238.
+- RSU location/capacity/link, carrier frequency, vehicle CPU-energy coefficient, movement quantization, reward weights/normalizers, fixed UE transmit power, simplified interference grouping, and one-task-per-vehicle-per-second adaptation are thesis simulation assumptions or design choices, not established by the two cited papers.

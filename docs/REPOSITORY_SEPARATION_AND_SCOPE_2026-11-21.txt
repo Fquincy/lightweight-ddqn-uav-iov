@@ -1,0 +1,131 @@
+TWO REPOSITORIES AND THE LIGHTWEIGHT EXPERIMENT SCOPE
+21 November 2026
+Status: packaging plan; no repository creation, upload or training performed.
+
+1. CONFIRMED EXPERIMENT SCOPE
+
+Both the Lightweight and Low Complexity experiments use vehicle-local,
+UAV1, UAV2, RSU1 and RSU2 processing. Neither active experiment includes a
+cloud server or charging station. Security/trust remains deferred.
+
+For the new lightweight implementation, removal means no cloud/charging
+environment entities, destination/charging actions, recharge transitions,
+charging reward bonuses or charger-related observation fields. Apply the same
+scope to trained models, heuristics, evaluation, diagrams and reported results.
+Do not simply rename the old local/UAV/edge/cloud/charge action labels.
+
+Retain UAV initial battery, energy consumption, propulsion, compute costs and
+energy-feasibility constraints. Battery reset at the start of an independent
+episode is an initial condition; it must not become an in-episode recharge.
+
+The old scripts still contain cloud and charging. They are historical source
+material and are not the active lightweight experiment. Preserve their original
+versions for provenance. Adapt the learner to the corrected environment in new
+source files, then test that the excluded mechanisms cannot be exercised.
+No new lightweight executable controller has been implemented yet; these
+documents do not claim the old scripts were already edited to remove them.
+
+2. TWO DIFFERENT GITHUB REPOSITORIES ARE APPROPRIATE
+
+Suggested names:
+  lightweight-ddqn-uav-iov
+    Friend's separate lightweight design, implementation and training track.
+
+  low-complexity-ddqn-uav-iov
+    Owner's ongoing low-complexity designs, experiments and results.
+
+Each repository should explain its objective and current evidence status,
+provide its own setup/run instructions and keep its own protocols, results,
+audits, manifests, issues and releases. A collaborator can work through pull
+requests or be granted repository access after the owner creates it.
+
+The names describe alternative efficient-DDQN research approaches. They do
+not establish two different scientific contributions or mean either claim has
+been proven. Contribution two remains the future security/trust work.
+
+3. MAKE EACH REPOSITORY SELF-CONTAINED
+
+Recommended structure within EACH repository:
+  README.md
+  docs/
+  src/
+  tests/
+  protocols/
+  results/              small auditable summaries, with large-artifact index
+  provenance/
+    SOURCE_MAP.json
+    COMMON_ENVIRONMENT_MANIFEST.json
+  requirements/         verified pinned environment instructions/locks
+
+For Lightweight, put START_HERE and reference notes in docs/ and link them
+from that repository's README. Include the corrected v2 simulator, its v1
+configuration/helper dependency, required controller/baseline modules, and
+their licenses/provenance. Historical material belongs in clearly labeled
+reference snapshots; do not make unsafe legacy launchers the default command.
+
+For Low Complexity, preserve the original directory structure in an immutable
+source/evidence snapshot where frozen hashes and paths require it. A portable
+adapter may be added as a new version. Do not silently rewrite frozen files
+or claim an adapter is the original audited run. Include the failed and mixed
+results relevant to the contribution, not only promising summaries.
+
+Record original path, exported path, SHA256, original version and any adaptation
+for every copied dependency. Root-relative paths in old documents describe the
+private source tree: update the public navigation and show that source mapping.
+Do not depend on E: paths, another checkout, a shared writable simulator folder,
+a nested .git directory or a local virtual environment copied from this laptop.
+
+Use a versioned source copy of the common simulator in each repository at first.
+This small duplication is preferable to a missing runtime dependency. The two
+copies must have matching original hashes if the physical model is claimed to
+be identical. Later amendments need a version and explanation. Independently
+test clean clones so each experiment can run with only its declared dependencies.
+
+4. KEEP THE SCIENTIFIC COMPARISONS VALID ACROSS REPOSITORIES
+
+Coordinate seed reservations through one owner-managed ledger covering both
+repositories. Local protocol copies should reference the same ledger revision.
+No new seed blocks are allocated by this packaging plan. Existing reserved
+final sets remain untouched. Each track needs independent development and
+confirmation evidence according to its predeclared protocol.
+
+Keep simulator/reward version, workload definition, observations, admissible
+actions and performance metrics aligned when directly comparing the tracks.
+If one changes the physical model, it becomes a separate version and cannot
+be compared by casually combining its scores with old results.
+
+Use matched baselines and same-target deployment timings. A friend's faster
+training workstation is not a controller-efficiency gain. Do not pool unrelated
+runs or pick the best initialization. If results from both tracks inform
+winner selection, preserve that selection history and plan untouched final
+confirmation. Publication in separate repositories does not remove leakage.
+
+5. PUBLISH THE RESEARCH EXPORTS, PRESERVE THE PRIVATE MASTER FOLDER
+
+Prepare two new staging/export directories. Copy the required research material;
+do not cut or relocate the current master folders or overwrite audited results.
+The Lightweight export must include the needed shared dependencies even though
+they currently live under Low Complexity in the private tree.
+
+Exclude private extension/identity documents, supervisor correspondence,
+credentials, private drafts, machine configs, virtual environments, caches and
+nested Git histories. Review actual content and tracked history before the first
+push. Third-party articles/code retain their own licenses; link to publisher
+papers unless redistribution is appropriate and properly attributed.
+
+Put large checkpoint/log archives in suitable release/LFS/external storage with
+an index and hashes. Keep the complete original private research archive. A
+public repository should say exactly which large artifacts are available and
+which results its included files can reproduce.
+
+Before the first push, verify the staged inventory, secrets/private-file
+exclusions, dependency completeness, source mappings, README links and relevant
+portable tests. Repository creation does not authorize launching research.
+
+6. NEXT PRACTICAL ACTION
+
+The owner may create the two repositories with the suggested names, or choose
+different names. Once their URLs are available, prepare the two concrete local
+exports, validate each, and push the appropriate files to its own destination.
+No remote repositories, branches, collaborator invitations or uploads have
+been created by this scope/documentation update.

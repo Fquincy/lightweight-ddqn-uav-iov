@@ -1,0 +1,591 @@
+COLLABORATOR HANDOFF: LIGHTWEIGHT DDQN FOR UAV-ASSISTED IoV OFFLOADING
+Prepared: 21 November 2026
+Owner: Clarke Fitzgerald Quincy
+Status: PROSPECTIVE RESEARCH INSTRUCTIONS, NOT A FROZEN TRAINING PROTOCOL
+
+READ THIS FIRST
+The research objective is to bring the original proposed contribution to life:
+"A Lightweight DRL-Based Approach for Task Offloading in UAV-Assisted IoV
+Networks", with Double Deep Q-Network (DDQN) as the selected learning method.
+The current Low Complexity research continues independently. This document
+creates a parallel collaboration plan; it does not replace either the topic or
+the existing experiments, certify a lightweight model, or launch training.
+
+Your first task is to reproduce and understand the corrected problem, review
+the literature and write a concrete design/comparison proposal. Do not begin
+by repeatedly training the old scripts until a favorable graph appears.
+Existing failed and mixed experiments are valuable evidence to retain.
+
+MANDATORY SCOPE: no cloud server and no charging station in the active
+lightweight experiment. Processing destinations are vehicle-local, UAV1, UAV2,
+RSU1 and RSU2. Remove legacy cloud/charging state fields, actions, rewards and
+environment logic when porting the old learner; renaming those actions or
+hiding them in a plot is not removal. Historical originals stay preserved.
+
+1. WHAT WE WANT TO ACHIEVE
+
+Implement a defensible DDQN-based controller that substantially reduces the
+resources needed for complete offloading decisions while preserving the
+declared return and deadline performance against credible alternatives.
+
+The intended contribution is an implemented, justified controller improvement
+within UAV-assisted vehicular offloading, supported by fresh controlled
+experiments. It is not merely a new experiment, a renamed standard DDQN, fewer
+neurons, a GPU-trained network, or a gain against random decisions.
+
+Possible final claim, ONLY IF supported:
+"A structured compact DDQN controller reduces measured deployment storage
+and complete decision latency relative to named DDQN references, while
+preserving return and deadline success across independent initializations
+and previously unseen workloads. A matched ablation identifies the benefit
+of the proposed mechanism."
+
+Name every reference, hardware target, scenario, uncertainty and limitation.
+Do not claim optimality, universal deadline guarantees or superiority to every
+DRL algorithm. Whether the resulting work satisfies thesis requirements is a
+separate academic decision. No particular result is guaranteed.
+
+2. WHAT A MORE POWERFUL MACHINE CAN AND CANNOT DO
+
+It can accelerate compatible batched learning, permit larger controlled
+training budgets, run independent initializations in parallel and collect
+better uncertainty estimates. CPU simulation and small-network inference may
+remain the bottleneck; profile before assuming a large GPU will help.
+
+It cannot repair an incorrect task/action model, manufacture novelty, remove
+harmful allocations, fix a biased comparison or turn a failed policy screen
+into a pass. A faster workstation also speeds up the baselines. Deployment
+latency ratios must be measured for all controllers on the SAME target.
+
+Separate offline training cost from online deployment cost. DDQN ordinarily
+uses online and target networks during training. Greedy deployment normally
+needs only the trained online network, without the optimizer or replay buffer.
+This makes a deployment-lightweight DDQN possible in principle, although
+training memory/compute must also be reported. Do not count two inference
+networks if only one is actually deployed. Prioritized replay is optional,
+not part of the definition of DDQN; begin with uniform replay unless a
+predeclared experiment justifies its additional training cost.
+
+3. PROJECT MAP: READ THESE FILES IN ORDER
+
+The reading paths below refer to THIS lightweight repository root. Required
+reference source and simulator files are included locally. Original paths and
+hashes are recorded in provenance/SOURCE_MAP.json. Historical text may still
+refer to the private Fitz Thesis docs tree; use the source map and NAVIGATION.md
+to locate its public equivalent. Private alignment reviews are replaced by a
+technical summary. No sibling repository or owner's C:/D:/E: paths are needed
+for the included active simulator and packaging checks.
+
+A. Historical alignment findings:
+   docs/LEGACY_ALIGNMENT_SUMMARY.md
+   Private correspondence, drafts and personal details are not in this export.
+
+B. Corrected physical model and provisional assumptions:
+   reference/modeling/CHAPTER3_ENVIRONMENT_README.txt
+   reference/modeling/CHAPTER3_MODEL_VALIDATION_2026-10-31.txt
+   src/simulator/chapter3_iov_env.py
+   src/simulator/chapter3_iov_env_v2.py
+
+C. Earlier lightweight implementation, as historical material:
+   reference/historical_legacy/ddqfinaltraining.py
+   reference/historical_legacy/ddqn_3d_uav_iov.py
+   reference/historical_legacy/train_3d_ddqn.py
+   reference/historical_legacy/README_3D_DDQN.md
+
+D. What subsequent development has already taught us:
+   reference/research_history/LOW_COMPLEXITY_CONSOLIDATED_CONTRIBUTION_DECISION_2026-11-19.txt
+   reference/research_history/ASSIGNMENT_PRICE_AUDITED_RESULTS_AND_CONTRIBUTION_DECISION_2026-11-19.txt
+   reference/research_history/VALUE_GRADIENT_ISOLATION_DEVELOPMENT_RESULTS_REVIEW_2026-11-21.txt
+   reference/research_history/VALUE_GRADIENT_ISOLATION_SAVED_TRACE_DIAGNOSIS_2026-11-21.txt
+   reference/low_complexity_source/LOW_COMPLEXITY_PROJECT_STATUS.json
+
+The consolidated decision predates the last few comparisons: use it as a
+family-level history, then read the later dated results. Do not treat every
+smoke, code repair or ablation as an independent failed research design.
+
+4. IMPORTANT FINDINGS ABOUT THE OLD LIGHTWEIGHT FILES
+
+ddqfinaltraining.py contains a 128-128 MLP and uniform replay. Its original
+environment includes cloud and charging, with one action per UAV. This does
+not match the corrected vehicle-destination plus UAV-movement controller.
+
+ddqn_3d_uav_iov.py contains Conv1d, a two-layer LSTM, attention, residual blocks,
+dueling streams and prioritized replay. Its name or training success does not
+establish a small model, physical 3D movement or a measured efficiency gain.
+Its attention receives a length-one representation at the inspected point;
+do not assume it demonstrates useful multi-node coordination. Verify actual
+inputs and sequence construction before assigning meaning to the architecture.
+
+train_3d_ddqn.py imports the legacy environment, with a fallback to a security
+module. Do not invoke it unchanged for this new experiment. Keep the historical
+files and checkpoints intact; port validated components into new files.
+Changed observation/action dimensions normally invalidate direct checkpoint
+resumption. Any transfer must define the mapping and be an experimental arm.
+
+Older CODE_BASED_ANALYSIS.md and TRAINING_REVIEW_SUMMARY.md explicitly contain
+expected results and a statement that training was not run in that review.
+Some plot scripts use constructed values; some comparative output paths have
+nominal/fallback measurements. None may be promoted to fresh measured evidence.
+There are historical checkpoints and logs, but this handoff has not established
+their full source/config/seed provenance or re-audited their claimed outcomes.
+
+5. INSPIRATION REFERENCES AND THE RESEARCH GAP
+
+Primary recent inspiration FROM THE EXISTING LOCAL REFERENCES:
+Shu Xu, Qingjie Liu, Chengye Gong and Xupeng Wen (2025),
+"Energy-Efficient Multi-Agent Deep Reinforcement Learning Task Offloading
+and Resource Allocation for UAV Edge Computing", Sensors 25(11), 3403.
+https://doi.org/10.3390/s25113403
+Local source: October 31/sensors-25-03403.pdf
+
+Read Section 3 (physical models and objective), Section 4 (MDP and MATD3-TORA),
+Section 5 (comparisons/sensitivity) and especially Section 5.5 (limitations).
+The authors discuss scalability, centralized-critic information and processing
+bottlenecks. This motivates asking whether a compact discrete DDQN can make
+useful coordinated decisions under explicit deployment resource constraints.
+
+Use their logic of defining quantities, modeling service, forming an objective,
+mapping it to an MDP, comparing methods and reporting limitations. Write our
+own derivations and prose. Do not copy their paper or transfer their numerical
+results into our simulator. It is MATD3-TORA, not DDQN, and includes different
+actions and assumptions. Replacing MATD3 with DDQN alone is not the novelty.
+Their stated exponential-scaling limitation is an author statement to examine,
+not a complexity theorem established by our review. Check apparent printed
+inconsistencies rather than copying equations/settings mechanically.
+
+Historical modeling anchor confirmed in the alignment records:
+Hao Hao, Changqiao Xu, Wei Zhang, Shujie Yang and Gabriel-Miro Muntean (2024),
+"Joint Task Offloading, Resource Allocation, and Trajectory Design for Multi-UAV
+Cooperative Edge Computing With Task Priority", IEEE TMC 23(9), 8649-8663.
+https://doi.org/10.1109/TMC.2024.3350078
+Local PDF: October 31/Joint_Task_Offloading_Resource_Allocation_and_Trajectory_Design_for_Multi-UAV_Cooperative_Edge_Computing_With_Task_Priority.pdf
+Its latent-space hybrid-action method and full control problem are not our
+DDQN implementation. Declare which physical assumptions are adapted.
+
+Also read DDQN (arXiv:1509.06461), action branching/BDQ (arXiv:1711.08946),
+vehicular congestion-aware DDQN (arXiv:2404.07215), and the closest-work matrix
+in reference/research_history/INCUMBENT_CLOSEST_WORK_MATRIX_2026-11-15.txt.
+Parameter sharing, branching, distillation, pruning, quantization, feasibility
+masks and congestion awareness already exist. Combining names is not enough.
+
+A newer highly relevant record is Q-TOP (2026),
+https://doi.org/10.1109/TVT.2026.3721145 . Its metadata was verified, but no
+full method was obtained in this handoff. Obtain/read it before asserting
+priority over queue-aware UAV-IoV offloading. Sensors 2025 is the chosen recent
+FULL-TEXT inspiration among the local papers, not a claim to be the newest
+paper in the field. See REFERENCE_NOTES_2026-11-21.md for reading tasks.
+
+6. KEEP THE TWO TRACKS INDEPENDENT
+
+Use TWO separate repositories, provisionally named lightweight-ddqn-uav-iov
+and low-complexity-ddqn-uav-iov. Work in an isolated lightweight checkout, with
+its own README, dependencies, source, tests, protocols and outputs. A working
+branch inside that repository is optional. Repository separation does not
+itself prevent statistical leakage. Resolve all runtime paths locally.
+
+Package the corrected simulator plus its required helpers as a versioned,
+hash-bound copy in EACH repository. Do the same for required baseline code.
+No runtime import may depend on a sibling Low Complexity checkout. Preserve
+the original reference snapshot, and record any future local amendments in a
+new version. Full packaging details are in
+REPOSITORY_SEPARATION_AND_SCOPE_2026-11-21.txt next to this guide.
+
+These are two approaches to the SAME efficient-DDQN contribution-one goal.
+They are not automatically two thesis contributions merely because they have
+different repository names. Security/trust remains deferred contribution two.
+
+Do not modify frozen Low Complexity scripts/protocols, its raw runs, hashes,
+archives or project status to accommodate this track. Treat its final seed
+reservations as occupied and unavailable. Do not run its old launchers on your
+machine: they are bound to particular environments, outputs and authorizations.
+
+Shared historical development evidence may inform BOTH future designs, but
+is not untouched validation for either one. Register new task/model seeds in
+one cross-track seed ledger before use. Coordinate proposed seed allocations
+with the owner so simultaneous work cannot reserve the same blocks. No new
+seeds are allocated by this handoff.
+
+The first promising track is a candidate to verify, not an automatic thesis
+winner. Record the branch-selection rule and every tried design. If both are
+compared on a holdout and that comparison selects a winner, that holdout has
+been used for selection: arrange a further untouched confirmation set rather
+than repeatedly choosing whichever produces favorable final results.
+
+7. COMMON PHYSICAL PROBLEM TO VALIDATE BEFORE LEARNING
+
+Recommended starting point: src/simulator/chapter3_iov_env_v2.py, included
+with its v1 helper/config dependency and recorded original hashes. Start
+from identical simulator
+and reward settings for all new arms. This is a simulation study with stated
+limitations, not a validated real UAV/vehicle deployment.
+
+Current default example: 30 vehicles, two UAVs, two RSUs, forty one-second
+slots. Each current task has five destinations: local vehicle, UAV1, UAV2,
+RSU1, RSU2. Each UAV has five movement choices: hover/north/east/south/west.
+The v2 state size is 17*N+23 (533 for N=30); the joint action has N+2 entries.
+Confirm the actual config when freezing your experiment; these dimensions
+describe the inspected default, not a promise every historical script agrees.
+
+Keep cloud, charging, V2V and security/trust OUT of contribution one. Do not
+claim learned CPU frequency, bandwidth allocation or continuous trajectory
+optimization if the implementation uses fixed rules/discrete moves.
+
+Add an explicit scope check to the future implementation: no cloud/charging
+entities, no recharge action/transition/bonus, no cloud route, and no charger
+distance/status feature in active observations. Check action labels as well as
+dimensions: five destinations means local/UAV1/UAV2/RSU1/RSU2. UAV battery
+depletion, propulsion/computation energy and energy feasibility remain; removing
+charging does not mean removing UAV energy constraints. Do not charge a UAV
+implicitly when an episode is still running. Initial energy at episode reset
+is an initial condition, not a charging mechanism. Verify training, evaluation,
+baselines and figures all use this same scope.
+
+Check task units (bytes versus bits, cycles, hertz, seconds, joules), task
+identity, mobility, link availability/interference, actual upload completion,
+CPU queue ordering, deadline counting and unfinished tasks at the horizon.
+Default RSU rate/CPU and several physical constants are explicitly provisional.
+Carry these limitations into the protocol and later sensitivity checks. Any
+physical-model revision is a new version applied to all comparison arms;
+it does not retroactively repair an older failed experiment.
+
+Compressed queue observations are partial observations. Do not claim a fully
+observed Markov state or convergence guarantees without justification. Recurrent
+history is an option to justify, not an automatic reason to restore the old LSTM.
+
+8. CHOOSE ONE PRECISE MECHANISM BEFORE THE LARGE RUN
+
+Recommended starting hypothesis to investigate, NOT an approved new model:
+a compact, parameter-shared task/server scoring DDQN using observable workload
+and deadline context, with an explicitly bounded joint allocation decoder.
+
+The improvement sought is structural sharing of repeated per-task/per-node
+computation while retaining enough coordination to avoid concentrating jobs
+on one server. It should go beyond making a 128-unit network a 24-unit network.
+First check whether prior branching, graph or shared-encoder offloading methods
+already implement the same mechanism more simply. If so, identify a precise
+extension or choose a different justified mechanism before calling it novel.
+
+Specify in a DESIGN_BRIEF.md:
+- where inference runs (RSU/edge coordinator versus each UAV), information
+  available at that location and any observation/communication overhead;
+- state/observation features and normalization, task/server feature sharing,
+  pooled context, dimensions and the exact value/action-score equations;
+- which computations/weights are shared and how missing tasks/servers are handled;
+- how a full joint action is produced, tie breaking, masks and bounded search;
+- how the SAME decoder is used for DDQN next-action selection;
+- why the mechanism could preserve deadlines and where it might fail;
+- operation counts, parameter/buffer bytes, temporary memory and scaling in
+  vehicles, UAVs, servers, candidates and decoder iterations;
+- the closest existing equations, the exact proposed difference, and a matched
+  ablation plus a conventional equally informed control.
+
+If the critic is Q(s,a)=V(s)+sum_j A_j(s,a_j), independent branch maxima are
+exact only for that separable critic with independent feasible choices.
+Joint capacity coupling changes the problem. A bounded decoder may be only
+approximate; state that explicitly and test it against exhaustive tiny cases.
+Do not claim arbitrary joint interactions or exact global argmax merely from
+linear output size. Do not emit the full 5^(N+2) Cartesian action vector for
+N=30; it is unnecessary and intractable. Sequential decoding must charge all
+its stages in complete-slot latency, and use only one physical slot transition.
+
+Start with FP32 and uniform replay. Quantization/distillation/pruning may be
+worth a later, separate declared experiment. Adding all of them now would
+obscure which mechanism helps. Ordinary model compression is useful engineering
+but its domain-specific scientific improvement still needs differentiation.
+
+9. DDQN UPDATE AND LEARNING CORRECTNESS
+
+Let theta be the online parameters, theta_bar the target parameters, and D
+the declared full-action decoder. For a nonterminal successor observation s':
+
+  a_star = D(s'; theta)
+  y = r + gamma * Q(s', a_star; theta_bar)
+  loss = mean Huber(Q(s,a; theta) - stop_gradient(y))
+
+At an actual finite-horizon terminal transition, y=r and no successor bootstrap
+is used. A time-limit truncation of a continuing problem is a different case:
+declare its semantics and test the mask accordingly. Include remaining time
+when formulating a finite-horizon controller. Define gamma from the objective;
+do not switch discounting after observing performance.
+
+Select successor actions using the online network and evaluate those actions
+using the target network. No target-network gradient. Execute target copies
+on a declared update schedule. Use the same feasibility/decoder logic in
+collection, targets and evaluation unless a difference is explicitly justified.
+Log reward components, selected Q, target Q, targets, TD errors, gradient norms,
+clipping, epsilon, target copies and action/destination distributions.
+
+Imitation or teacher initialization can be added only as a declared mechanism.
+If used, retain teacher-only, imitation-only and no-teacher DDQN controls; count
+teacher labels and teacher computation. Imitation success without subsequent
+DDQN benefit must not be presented as proof of a successful DDQN improvement.
+
+10. REQUIRED COMPARISONS
+
+Freeze named implementations and fair tuning budgets, not labels alone:
+1) Proposed compact DDQN (one declared primary).
+2) The same model without the proposed mechanism, with capacity/input differences
+   documented. If sharing is ablated, also add a parameter-budget-matched control.
+3) Plain small DDQN without the new mechanism, using the same observations and
+   admissible actions. Use an ordinary signed value head as a conventional
+   baseline; legacy softplus is an additional arm if retained, not the only control.
+4) Compact64 and wide128 additive/branching DDQN references, correctly adapted
+   to the SAME environment and training protocol.
+5) Relevant strong observed-load/radio heuristic, plus all-local, nearest-RSU
+   and UAV-selective heuristics. Measure heuristic costs too.
+
+Use assignment_price_load_radio_heuristic.py and its dependencies as inspected
+reference material, with a portable adapter tested against saved cases. If an
+equivalent baseline cannot be ported, state the blocker; do not quietly drop
+the strongest reference because it is hard to beat.
+
+If a new mechanism uses extra load/deadline information, supply it to a suitable
+nonlearned rule and an equally informed neural control. If it masks choices,
+include the unmasked version and an appropriate control with the same mask.
+Explain whether movement is learned, fixed or supplied by a common rule.
+
+Do not make a MATD3/PPO paper's reported plot a numerical baseline. To compare
+those methods, implement/test a compatible adaptation on this same problem
+and disclose the action-space adaptation. This is additional work, not needed
+merely because Sensors 2025 is the inspiration reference.
+
+11. GATED EXECUTION PLAN FOR THE COLLABORATOR
+
+GATE A - portable setup and historical reproduction
+Record the Git commit, source hashes, OS, Python/package versions, CPU/GPU,
+RAM, device precision, BLAS/thread settings and available storage. Build a new
+virtual environment; do not commit/copy the owner's .venv or temporary C: env.
+Pin dependencies only after an import/compatibility check. A requirements file
+for this new track does NOT yet exist. No new runnable training command is
+provided by this planning handoff; the portable runner must first be built.
+
+The old research env reports Python 3.11.9, NumPy 2.4.6 and CPU Torch 2.15.0
+in its saved declaration. That is provenance, not an instruction to install an
+unavailable build. Verify the frozen numerical environment record. Choose a
+supported local CPU/CUDA build for the NEW protocol and record differences.
+Do not change old environment records. Rebenchmark all arms on the new host.
+
+GATE B - modeling and mechanism decision
+Deliver the source-to-equation map, related-work matrix, proposed mechanism,
+explicit claim, deployment boundary and experiment budget. Confirm the scope
+with the owner. A first literature-informed design may be rejected without
+spending training time. Do not claim this guide has already frozen the design.
+
+GATE C - mechanics, runner and auditor
+Implement new source/tests/CLI in the new track. Test dimensions/action mapping,
+tiny-case decoding, real joint capacity effects, reward accounting, terminal
+targets, replay identity, online/target separation, masks, target updates,
+finite gradients, export parity and deterministic save/load.
+Build an independent saved-artifact auditor that recomputes task outcomes,
+declared screens and hashes; include a corruption-detection test.
+Exercise the entire workflow on a tiny isolated engineering fixture, using
+nonresearch seeds/output and a conspicuous NOT_RESEARCH_EVIDENCE label.
+Confirm research mode refuses to run without the frozen protocol hash and an
+explicit launch confirmation. Passing fixtures does not establish policy quality.
+
+GATE D - complete inference cost before a large training commitment
+Time state preparation through the COMPLETE joint decision, including feature
+construction, normalization, masks, decoder, wrappers and CPU/GPU transfers.
+Report a separate model-forward-only timing if useful; do not substitute it
+for the complete measurement. Exclude simulator stepping/file I/O consistently.
+Benchmark alternating/randomized controller order on common observations,
+multiple rounds, warmup, median/p95 and variability. Synchronize CUDA timing.
+Report cold start separately. Use batch one for sequential online decisions
+unless the deployment actually batches independent problems.
+Count all deployed networks; peak runtime memory, parameter/buffer payload,
+serialized model size and training/replay/optimizer memory are distinct metrics.
+Reject a claimed latency improvement that vanishes after decoder cost is included.
+
+GATE E - bounded fresh-seed development
+Prepare PROTOCOL.json before running: primary/comparators, all settings, seed
+ledger, budget, permitted tuning, checkpoint rule, exact screens, uncertainty,
+failure/stop rules, logging, artifact paths and confirmations. Owner reviews
+this concrete protocol and authorizes its first development launch separately.
+
+Practical planning recommendation (NOT frozen numbers): use separate tiny
+engineering seeds, at least three development initializations to diagnose
+behavior, then at least five independently trained initializations for a
+confirmatory comparison. Plan at least 64 matched evaluation episodes per fit
+and primary scenario initially, increasing from a precision/power calculation
+on development data rather than treating this count as guaranteed sufficient.
+Initializations and episode/task workload randomness are different sources of
+uncertainty; nested episodes do not create more independent trained models.
+
+A stronger machine can support a declared learning-curve budget ladder, e.g.
+cumulative 100,000, 500,000 and 1,000,000 environment slots PER trained arm/fit.
+These are example planning checkpoints, not selected budgets or release to run.
+Choose one feasible primary endpoint before seeing its outcomes, account for
+all arms/fits, and use the same available training/tuning budget for controls.
+Record updates-per-slot, replay warmup, exploration, target copies and data
+reuse; more epochs over the same traces are not more environment experience.
+Do not keep extending only a failing primary until it happens to win.
+
+GATE F - independent development review and one locked final comparison
+Audit all saved results, failures and early stops. Freeze one candidate using
+development evidence only. Keep a new final set of model/task seeds untouched
+until design/tuning/checkpoint rules are locked and the owner separately
+authorizes the final comparison. Stop tuning once final outcomes are inspected.
+If the final comparison fails, report that failure; redesign uses new seeds
+and a new protocol. The thesis stays unchanged until evidence supports a claim.
+
+12. SUCCESS CRITERIA: WRITE THEM BEFORE TRAINING
+
+Do not inherit a failed historical threshold as universally correct, and do
+not weaken it retrospectively to pass this model. Give a prospective scientific
+or deployment justification for each new requirement. This guide deliberately
+does not invent application limits, policy margins or calibration tolerances.
+
+Fill every required item before releasing research mode:
+- named deployment target and location;
+- required parameter/serialized-storage reduction and reference;
+- complete decision median/p95 reduction or declared absolute budget;
+- return and deadline acceptance rule for every required comparator;
+- whether the claim is strict dominance or a justified noninferiority tradeoff;
+- numerical noninferiority margins, if used, with prior justification;
+- value stability/calibration role, scales, thresholds and how failure is treated;
+- mechanism effect required from the ablation;
+- initialization aggregation, uncertainty method and multiple-comparison handling;
+- training budget, checkpoint rule and failure/stop treatment.
+
+For a "no worse" claim, use zero loss or a justified declared noninferiority
+margin; a nonsignificant difference is not proof of equality. Never call a
+loss on an important deadline metric harmless merely because return improves.
+Use per-fit paired differences and equal-fit aggregate estimates with confidence
+intervals. Account for paired workloads and variability across trained fits.
+Do not treat every task as an independent model replicate or select the best seed.
+
+Compare final predeclared checkpoints; if validation-based checkpoint selection
+is essential, allocate a separate selection set and the same selection rule
+for all trained arms. Preserve all outcomes. Failure to meet a gate stays failure.
+
+Measure and report:
+Return, on-time tasks/all generated tasks, unfinished tasks, mean/p95 task delay,
+UAV compute/propulsion energy, destination decisions and per-server waiting;
+Q/target/TD-error distributions, terminal/nonterminal value errors, gradients,
+clipping and sign/scale problems; storage, runtime memory and complete latency.
+Own-policy realized return G versus Q is a calibration diagnostic, not exact
+Q-star error. Good action ranking need not mean calibrated absolute values;
+declare their roles before the run and retain both kinds of diagnostics.
+
+Use size/load, deadline tightness, bandwidth, CPU capacity and mobility
+sensitivity on prospectively named settings. State where the controller works
+and where it does not. At minimum test a denser/congested setting, not only the
+default where most greedy decisions begin with empty queues. If the network
+does not support unseen vehicle counts without retraining, disclose that.
+
+13. LESSONS NOT TO REPEAT
+
+The latest run has 367 primary misses in initialization 2, 366 at RSU2.
+For 140 newly missed tasks versus imitation-only E, BOTH selected RSU2;
+extra CPU waiting accounts for the full delay increase. Simultaneous task
+allocation can create congestion even when queues are empty before decisions.
+Adding an observation of an already empty queue is not a demonstrated fix.
+
+Blocking V-to-hidden TD gradients did not freeze the representation. Other
+loss paths changed features and disturbed calibrated values. This is observed
+algebraic attribution, not proof that a frozen trunk will fix the policy.
+The common scalar V cancels from separable greedy branch choices.
+
+The primary visited empty queues in only about 12-13% of online training
+states but 100% of its greedy evaluation states. Even recorded direct terminal
+targets were badly fitted. Log behavior versus evaluation distributions and
+actual replay sample IDs. DDQN is off-policy: mismatch alone does not prove
+invalid learning, and simply adding compute is not a verified remedy.
+
+Training loss, imitation loss and gradient clipping improvements are diagnostic
+measurements, not substitutes for task outcomes or deployment measurements.
+This parallel track may investigate alternatives but must not erase these results.
+
+14. SAVE ENOUGH EVIDENCE TO REPRODUCE AND AUDIT
+
+Suggested future layout (directories not implemented by this handoff):
+  Lightweight DDQN/src/
+  Lightweight DDQN/tests/
+  Lightweight DDQN/protocols/
+  Lightweight DDQN/runs/<unique-run-id>/
+  Lightweight DDQN/reports/
+
+For each run save protocol/source hashes, seed assignments, environment lock,
+hardware/backend record, numeric progress, exit code, raw per-episode/task
+outcomes, update diagnostics, checkpoint/export identities, comparison tables,
+auditor receipt and exact SHA256 manifest. Link large evidence to a versioned
+release/archive with hashes. Keep raw task records needed to explain misses;
+do not store every redundant model copy or batch tensor without a retention plan.
+Estimate disk use first and keep final checkpoints plus declared diagnostic
+snapshots; resumable intermediate state is permitted only if prospectively
+specified, fully hashed and excluded from outcome-based checkpoint selection.
+
+Progress should say: completed/total environment slots, updates, fit/arm,
+evaluation episodes, audit files, stage, elapsed time, recent throughput and
+estimated time remaining. Use measured rates, not a promised completion hour.
+Record failures and numerical issues immediately. Audited completion and
+independent archive verification are separate from a process exiting with code 0.
+
+15. WHAT TO RETURN TO THE OWNER
+
+First return, BEFORE long training:
+1. Reproduction/environment report and corrected model/code map.
+2. Literature difference table with exact sections/equations.
+3. One controller design brief with equations/decoder/cost, not multiple
+   untested mechanisms bundled together.
+4. Frozen-ready protocol, fair baseline inventory, new seed request,
+   compute/storage estimate and completed isolated engineering evidence.
+
+After an authorized development comparison:
+5. All raw outcomes and scripts, independently recomputed per-fit/aggregate
+   tables, learning curves from real logs, value distributions and full cost data.
+6. Ablation result and comparison with the strongest heuristic.
+7. Honest PASS/FAIL decision for every criterion, failed runs included.
+8. Manifest, checkpoint/deployment files, environment record and reproduction
+   commands tested from a clean clone; then propose whether final testing is warranted.
+
+Communicate concrete evidence: "storage improved but deadlines failed" is
+useful; "it converged" without these measurements is not a contribution decision.
+
+16. REPOSITORY PREPARATION BEFORE PUBLICATION
+
+The owner's entire private folder includes thesis drafts, supervisor messages,
+extension/identity documents, duplicated projects and virtual environments.
+Make a public research export while retaining the intact private project/archive.
+Do not blindly push the entire private folder or its nested .git histories.
+
+Public export should contain: this root README and handoff, source/tests,
+protocols, environment instructions, honest positive/negative reviews, compact
+audited result summaries and a manifest/index for larger evidence. Include
+historical code only with clear provenance labels. Keep both research tracks.
+
+Exclude personal/administrative documents (including Fitz Extension 2026 and
+identity-form PDFs), private supervisor correspondence, private drafts, Office
+lock files, credentials/.env, machine configs, .venv/venv*/site-packages,
+__pycache__, nested .git and duplicate dependency/install trees. Inspect content
+and Git history; .gitignore cannot remove something already committed.
+The public source/evidence export can still represent the entire RESEARCH
+project without disclosing private administration or copying runtimes.
+
+Large logs and checkpoints need a deliberate Git LFS/release/external archive
+plan with quota checks; ordinary Git rejects files over its hosted size limit.
+Preserve raw evidence privately and publish stable references/hashes if full
+data are not included. Check source/third-party paper/code licenses separately.
+Do not relicense downloaded papers as your own; link to their publishers by
+default. Agree ownership, attribution and collaboration permissions before release.
+
+The owner can create the two GitHub repositories next. Prepare and inspect
+each source/evidence export separately before pushing. Repository creation
+alone does not make the lightweight code portable or its old model compatible.
+This handoff does not create repositories, push anything, message the
+collaborator, alter the thesis, change any frozen research source or authorize
+a new long training run.
+
+17. FIRST MESSAGE TO THE COLLABORATOR (OPTIONAL TEXT TO COPY)
+
+Please read the root README and this START_HERE file first. I want an implemented,
+evidence-backed lightweight DDQN improvement for UAV-assisted vehicular task
+offloading. My low-complexity branch continues separately. Use the earlier
+lightweight training as historical material, resolve its model mismatch, and
+start from the corrected physical problem. Read Xu et al. (Sensors 2025) and
+Hao et al. (IEEE TMC 2024), then propose one precise efficiency mechanism and
+fair comparisons. Please return the design, cost benchmark, protocol and
+isolated workflow evidence before a large training commitment. We need measured
+storage/latency improvements with preserved return and deadline performance,
+not just a higher training reward or a smaller hidden layer. Keep all failures
+and use fresh coordinated seeds. No cloud, charging or security in this stage.
